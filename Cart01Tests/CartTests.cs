@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Cart01;
 using NUnit.Framework;
 
@@ -6,6 +7,26 @@ namespace Tests
     public class CartTests
 
     {
+        private static void AssertActualTotalEqualsExpectedTotal(int expected, Cart subject)
+        {
+            var actual = subject.Total;
+            Assert.AreEqual(actual, expected);
+        }
+
+        private static Cart GetTestSubject()
+        {
+            var subject = new Cart();
+            return subject;
+        }
+
+        private static void ScanAll(List<string> skus, Cart subject)
+        {
+            foreach (var sku in skus)
+            {
+                subject.Scan(sku);
+            }
+        }
+
         [SetUp]
         public void Setup()
         {
@@ -17,12 +38,10 @@ namespace Tests
         [TestCase("T34", 99)]
         public void Total_SingleItemScanned_UnitPriceReturned(string sku, int expected)
         {
-            var subject = new Cart();
+            var subject = GetTestSubject();
             subject.Scan(sku);
-            var actual = subject.Total;
-            Assert.AreEqual(actual, expected);
+            AssertActualTotalEqualsExpectedTotal(expected, subject);
         }
-
 
         [TestCase("A99", "B15", 80)]
         [TestCase("B15", "A99", 80)]
@@ -30,11 +49,11 @@ namespace Tests
         [TestCase("T34", "A99", 149)]
         public void Total_SingleItemsOfMultipleSkusScanned_ExpectedPriceReturned(string sku1, string sku2, int expected)
         {
-            var subject = new Cart();
-            subject.Scan(sku1);
-            subject.Scan(sku2);
-            var actual = subject.Total;
-            Assert.AreEqual(actual, expected);
+            var subject = GetTestSubject();
+            var skus = new List<string> {sku1, sku2};
+            ScanAll(skus, subject);
+            AssertActualTotalEqualsExpectedTotal(expected, subject);
         }
+
     }
 }
