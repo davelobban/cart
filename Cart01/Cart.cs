@@ -5,14 +5,14 @@ namespace Cart01
 {
     public class Cart
     {
-        private IPriceListRepository _priceList;
-        private IDictionary<string, int> _scannedSkus = new Dictionary<string, int>();
-        private IEnumerable<SpecialOffer> _offers;
+        private readonly IPriceListRepository _priceList;
+        private readonly IDictionary<string, int> _scannedSkus = new Dictionary<string, int>();
+        private readonly ISpecialOfferRepository _offers;
 
         public Cart()
         {
             _priceList =  new PriceListRepository();
-            _offers = SpecialOfferRepository.GetSpecialOffers();
+            _offers = new SpecialOfferRepository();
         }
 
         public void Scan(string sku)
@@ -20,37 +20,16 @@ namespace Cart01
             _scannedSkus[sku] = (_scannedSkus.ContainsKey(sku) ? _scannedSkus[sku] : 0) + 1;
         }
 
-        //public int Total
-        //{
-        //    get { return GetTotal(_scannedSkus, _priceList, _offers); }
-        //}
         public int Total
         {
             get
             {
                 var priceList = _priceList;
-                var total = 0;
+                var offers = _offers;
+                var scannedSkus = _scannedSkus;
 
-                foreach (var sku in _scannedSkus.Keys)
-                {
-                    var numberOfItemsScannedForSku = _scannedSkus[sku];
-                    var specialOfferFound = _offers.Any(s => s.Sku == sku);
-                    if (specialOfferFound)
-                    {
-                        var specialOffer = _offers.First(s => s.Sku == sku);
-                        var numberOfTimeSpecialOfferScanned = numberOfItemsScannedForSku / specialOffer.Quantity;
-                        total += specialOffer.Price * numberOfTimeSpecialOfferScanned;
-                        numberOfItemsScannedForSku -= specialOffer.Quantity * numberOfTimeSpecialOfferScanned;
-                    }
-
-                    total += priceList.GetPriceFor(sku) * numberOfItemsScannedForSku;
-                }
-
-                return total;
+                return TotalCalculator.GetTotal(scannedSkus, offers, priceList);
             }
         }
-
-
-        
     }
 }
