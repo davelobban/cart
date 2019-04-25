@@ -61,5 +61,16 @@ namespace Tests
         }
 
 
+        [TestCase("A99", 100)]
+        [TestCase("B15", 45)]
+        [TestCase("C40", 120)]
+        [TestCase("T34", 198)]
+        public void Total_TwoItemsOfSameSkuScanned_ExpectedPriceReturned(string sku1, int expected)
+        {
+            var skus = new List<string> { sku1, sku1 };
+            var subject = GetPopulatedCart(skus);
+            AssertActualTotalEqualsExpectedTotal(expected, subject);
+        }
+
     }
 }
