@@ -18,6 +18,12 @@ namespace Tests
             var subject = new Cart();
             return subject;
         }
+        private static Cart GetPopulatedCart(List<string> skus)
+        {
+            var subject = GetTestSubject();
+            ScanAll(skus, subject);
+            return subject;
+        }
 
         private static void ScanAll(List<string> skus, Cart subject)
         {
@@ -49,11 +55,11 @@ namespace Tests
         [TestCase("T34", "A99", 149)]
         public void Total_SingleItemsOfMultipleSkusScanned_ExpectedPriceReturned(string sku1, string sku2, int expected)
         {
-            var subject = GetTestSubject();
-            var skus = new List<string> {sku1, sku2};
-            ScanAll(skus, subject);
+            var skus = new List<string> { sku1, sku2 };
+            var subject = GetPopulatedCart(skus);
             AssertActualTotalEqualsExpectedTotal(expected, subject);
         }
+
 
     }
 }
