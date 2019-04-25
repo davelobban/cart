@@ -10,7 +10,7 @@ namespace Tests
         private static void AssertActualTotalEqualsExpectedTotal(int expected, Cart subject)
         {
             var actual = subject.Total;
-            Assert.AreEqual(actual, expected);
+            Assert.AreEqual(expected, actual);
         }
 
         private static Cart GetTestSubject()
@@ -68,6 +68,18 @@ namespace Tests
         public void Total_TwoItemsOfSameSkuScanned_ExpectedPriceReturned(string sku1, int expected)
         {
             var skus = new List<string> { sku1, sku1 };
+            var subject = GetPopulatedCart(skus);
+            AssertActualTotalEqualsExpectedTotal(expected, subject);
+        }
+
+
+        [TestCase("A99", 130)]
+        [TestCase("B15", 75)]
+        [TestCase("C40", 180)]
+        [TestCase("T34", 297)]
+        public void Total_ThreeItemsOfSameSkuScanned_ExpectedPriceReturned(string sku1, int expected)
+        {
+            var skus = new List<string> { sku1, sku1, sku1 };
             var subject = GetPopulatedCart(skus);
             AssertActualTotalEqualsExpectedTotal(expected, subject);
         }
