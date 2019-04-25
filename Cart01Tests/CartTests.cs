@@ -83,6 +83,12 @@ namespace Tests
             var subject = GetPopulatedCart(skus);
             AssertActualTotalEqualsExpectedTotal(expected, subject);
         }
-
+        [TestCase("A99", "B15", "C40", 130+ 75+ 180)]
+        public void Total_ThreeItemsOfThreeSkusScanned_ExpectedPriceReturned(string sku1, string sku2, string sku3, int expected)
+        {
+            var skus = new List<string> { sku1, sku1, sku1, sku2, sku2, sku2, sku3, sku3, sku3 };
+            var subject = GetPopulatedCart(skus);
+            AssertActualTotalEqualsExpectedTotal(expected, subject);
+        }
     }
 }
